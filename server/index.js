@@ -1,27 +1,37 @@
-import "dotenv/config"
+import "dotenv/config";
 import express from "express";
 import { connectDB, disconnectDB } from "./config/db.js";
-const app = express()
-const port = process.env.PORT || 8080
 
+const app = express();
+const port = process.env.PORT || 8080;
 
-app.use(express.json())
+app.use(express.json());
 
+let server;
 
-const server = app.listen(port, () => {
-    connectDB()
-    console.log(`server is running on http://localhost:${port}`)
-})
+const startServer = async () => {
+  try {
+    await connectDB();
+    server = app.listen(port, () => {
+      console.log(`server is running on http://localhost:${port}`);
+    });
+  } catch (error) {
+    console.error("something in starting server broke:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 const shutdown = () => {
-    console.log("interrupt received")
+  console.log("interrupt received");
 
-    server.close(() => {
-        //close connections
-        disconnectDB()
-        console.log("server closed")
-    })
-}
+  server.close(async () => {
+    //close connections
+    await disconnectDB();
+    console.log("server closed");
+  });
+};
 
-process.on("SIGINT", shutdown)
-process.on("SIGTERM", shutdown)
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
