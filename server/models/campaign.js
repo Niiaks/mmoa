@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
 
-const types = [
-  "emergency",
-  "bereavement",
-  "education",
-  "emergency",
-  "medical",
-  "other",
-];
+const types = ["emergency", "bereavement", "education", "medical", "other"];
 const statuses = ["active", "closed", "expired"];
 
 const campaignSchema = new mongoose.Schema(
@@ -16,12 +9,17 @@ const campaignSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       index: true,
+      required: true,
     },
     title: {
       type: String,
       trim: true,
+      required: true,
     },
-    description: String,
+    description: {
+      type: String,
+      required: true,
+    },
     type: {
       type: String,
       enum: types,
@@ -31,7 +29,6 @@ const campaignSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
     },
     targetAmount: {
       type: Number,
@@ -51,4 +48,4 @@ const campaignSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const Campaign = mongoose.Model("Campaign", campaignSchema);
+export const Campaign = mongoose.model("Campaign", campaignSchema);

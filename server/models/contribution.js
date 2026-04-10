@@ -8,6 +8,7 @@ const contributionSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Campaign",
       index: true,
+      required: true,
     },
     contributorName: {
       type: String,
@@ -16,7 +17,7 @@ const contributionSchema = new mongoose.Schema(
     contributorPhone: {
       type: String,
       trim: true,
-      min: 10,
+      minLength: 10,
     },
     amount: {
       type: Number,
@@ -25,7 +26,7 @@ const contributionSchema = new mongoose.Schema(
     paystackReference: {
       type: String,
       unique: true,
-      index: true,
+      required: true,
     },
     status: {
       type: String,
@@ -36,4 +37,4 @@ const contributionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const Contribution = mongoose.Model("Contribution", contributionSchema);
+export const Contribution = mongoose.model("Contribution", contributionSchema);
