@@ -4,4 +4,5 @@ export const ENV = {
   port: process.env.PORT,
   paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
   clientUrl: process.env.CLIENT_URL,
+  nodeEnv: process.env.NODE_ENV,
 };
