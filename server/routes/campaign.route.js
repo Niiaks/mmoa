@@ -11,7 +11,7 @@ import { protectedRoute } from "../middleware/auth.js";
 export const campaignRouter = express.Router();
 
 campaignRouter.post("/", protectedRoute, createCampaign);
-campaignRouter.get("/:slug", getCampaign);
 campaignRouter.get("/me", protectedRoute, getOrganizerCampaign);
+campaignRouter.get("/:slug", getCampaign);
 campaignRouter.patch("/:id/close", protectedRoute, closeCampaign);
 campaignRouter.patch("/:id/extend", protectedRoute, extendDeadline);
