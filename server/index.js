@@ -8,8 +8,6 @@ import { campaignRouter } from "./routes/campaign.route.js";
 import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.js";
 const app = express();
-const port = process.env.PORT || 8080;
-
 app.use("/api/v1/webhook", webhookRouter);
 app.use(express.json());
 app.use(cookieParser());
