@@ -50,6 +50,10 @@ const campaignSchema = new mongoose.Schema(
       enum: statuses,
     },
     deadline: Date,
+    requireContributorName: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true },
 );

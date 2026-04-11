@@ -7,7 +7,14 @@ export const createCampaign = async (req, res) => {
   try {
     const organizerId = req.user.id;
 
-    const { title, description, type, targetAmount, deadline } = req.body;
+    const {
+      title,
+      description,
+      type,
+      targetAmount,
+      deadline,
+      requireContributorName,
+    } = req.body;
 
     if (!title || !description || !type || !targetAmount) {
       return res.status(400).json({
@@ -41,12 +48,13 @@ export const createCampaign = async (req, res) => {
 
     // default to 30 day deadline if no deadline is passed
 
-    if (!dayjs(deadline).isValid) {
+    if (deadline && !dayjs(deadline).isValid()) {
       return res.status(400).json({
         success: false,
         message: "validation(error): invalid deadline",
       });
     }
+
     let campaignDeadline = deadline || dayjs().add(30, "days");
 
     const newCampaign = new Campaign({
@@ -57,6 +65,7 @@ export const createCampaign = async (req, res) => {
       type,
       targetAmount,
       slug,
+      requireContributorName,
     });
 
     await newCampaign.save();
@@ -106,6 +115,10 @@ export const getCampaign = async (req, res) => {
         numberOfContributors,
         amountRaised: campaign.totalRaised,
         targetAmount: campaign.targetAmount,
+        status: campaign.status,
+      },
+      meta: {
+        requireContributorName: campaign.requireContributorName,
       },
     });
   } catch (error) {
