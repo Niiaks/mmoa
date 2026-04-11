@@ -54,6 +54,10 @@ const campaignSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    withdrawn: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );

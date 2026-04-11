@@ -5,4 +5,5 @@ export const ENV = {
   paystackSecretKey: process.env.PAYSTACK_SECRET_KEY,
   clientUrl: process.env.CLIENT_URL,
   nodeEnv: process.env.NODE_ENV,
+  recipientCode: process.env.PLATFORM_RECIPIENT_CODE,
 };
