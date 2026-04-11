@@ -37,4 +37,5 @@ const contributionSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const Contribution = mongoose.model("Contribution", contributionSchema);
+const Contribution = mongoose.model("Contribution", contributionSchema);
+export default Contribution;

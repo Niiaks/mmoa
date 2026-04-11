@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
 
-const types = ["emergency", "bereavement", "education", "medical", "other"];
+export const types = [
+  "emergency",
+  "bereavement",
+  "education",
+  "medical",
+  "other",
+];
 const statuses = ["active", "closed", "expired"];
 
 const campaignSchema = new mongoose.Schema(
@@ -48,4 +54,5 @@ const campaignSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const Campaign = mongoose.model("Campaign", campaignSchema);
+const Campaign = mongoose.model("Campaign", campaignSchema);
+export default Campaign;

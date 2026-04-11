@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      min: 10,
+      minLength: 13,
       trim: true,
       required: true,
     },
@@ -35,4 +35,6 @@ const userSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export const User = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+export default User;
