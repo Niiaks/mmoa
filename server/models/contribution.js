@@ -14,11 +14,6 @@ const contributionSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    contributorPhone: {
-      type: String,
-      trim: true,
-      minLength: 10,
-    },
     amount: {
       type: Number,
       required: true,
