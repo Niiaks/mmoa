@@ -7,14 +7,19 @@ import { webhookRouter } from "./routes/webhook.route.js";
 import { campaignRouter } from "./routes/campaign.route.js";
 import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.js";
+import { withdrawalRouter } from "./routes/withdrawal.route.js";
+
 const app = express();
+
 app.use("/api/v1/webhook", webhookRouter);
+
 app.use(express.json());
 app.use(cookieParser());
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/contributions", contributionRouter);
 app.use("/api/v1/campaigns", campaignRouter);
+app.use("/api/v1/withdrawals", withdrawalRouter);
 
 let server;
 
