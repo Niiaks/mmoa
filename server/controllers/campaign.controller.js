@@ -108,6 +108,7 @@ export const getCampaign = async (req, res) => {
       success: true,
       message: "gotten campaign",
       campaign: {
+        id: campaign._id,
         title: campaign.title,
         description: campaign.description,
         deadline: campaign.deadline,
