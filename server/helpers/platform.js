@@ -5,6 +5,7 @@ import "dotenv/config";
 
 const code = detectNetwork("+233597090312");
 
+//dummy platform recipient
 async function createPlatformRecipient() {
   try {
     const response = await axios.post(
@@ -13,7 +14,7 @@ async function createPlatformRecipient() {
         type: "mobile_money",
         name: "Nii Akwei Pappoe",
         account_number: "0597090312",
-        bank_code: "MTN",
+        bank_code: code,
         description: "platform fees collection account",
         currency: "GHS",
       },
