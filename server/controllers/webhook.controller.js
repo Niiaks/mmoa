@@ -41,22 +41,16 @@ export const webhookController = async (req, res) => {
         const withdrawal = await Withdrawal.findOne({
           paystackTransferReference: event.data.reference,
         });
-        if (!withdrawal) {
-          console.log(
-            "no withdrawal found for this reference: ",
-            event.data.reference,
-          );
-        } else if (withdrawal.status === "successful") {
-          console.log("withdrawal already confirmed");
-        } else {
+
+        if (withdrawal && withdrawal.status !== "successful") {
           await Withdrawal.findOneAndUpdate(
-            {
-              paystackTransferReference: event.data.reference,
-            },
-            {
-              status: "successful",
-            },
+            { paystackTransferReference: event.data.reference },
+            { status: "successful" },
           );
+
+          await Campaign.findByIdAndUpdate(withdrawal.campaign, {
+            withdrawn: true,
+          });
         }
         break;
       }
@@ -65,31 +59,18 @@ export const webhookController = async (req, res) => {
         const withdrawal = await Withdrawal.findOne({
           paystackTransferReference: event.data.reference,
         });
-        if (!withdrawal) {
-          console.log(
-            "no withdrawal found for this reference: ",
-            event.data.reference,
-          );
-        } else if (withdrawal.status === "failed") {
-          console.log("withdrawal already confirmed");
-        } else {
-          await Campaign.findOneAndUpdate(
-            {
-              _id: withdrawal.campaign,
-            },
-            {
-              withdrawn: false,
-            },
-          );
+
+        if (withdrawal && withdrawal.status !== "failed") {
           await Withdrawal.findOneAndUpdate(
-            {
-              paystackTransferReference: event.data.reference,
-            },
-            {
-              status: "failed",
-            },
+            { paystackTransferReference: event.data.reference },
+            { status: "failed" },
           );
+
+          await Campaign.findByIdAndUpdate(withdrawal.campaign, {
+            withdrawn: false,
+          });
         }
+
         break;
       }
     }

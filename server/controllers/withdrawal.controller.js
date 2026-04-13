@@ -11,6 +11,8 @@ import { toLocale } from "../helpers/toLocale.js";
 const paystackUrl = "https://api.paystack.co";
 
 export const withdrawMoney = async (req, res) => {
+  let organizerReference;
+
   try {
     const campaignId = req.params.id;
     const organizerId = req.user.id;
@@ -48,6 +50,7 @@ export const withdrawMoney = async (req, res) => {
         message: "insufficient funds to withdraw",
       });
     }
+
     const organizer = await User.findById(organizerId);
     if (!organizer) {
       return res.status(400).json({
@@ -85,7 +88,21 @@ export const withdrawMoney = async (req, res) => {
       },
     );
 
-    console.log("recipient code", receiver.data.recipient_code);
+    organizerReference = uuidv4();
+    const platformReference = uuidv4();
+
+    const newWithdrawal = new Withdrawal({
+      campaign: campaignId,
+      organizer: organizerId,
+      totalRaised: campaign.totalRaised,
+      fee: platformFee,
+      amountSent,
+      paystackTransferReference: organizerReference,
+      status: "pending",
+    });
+
+    await newWithdrawal.save();
+
     // transfer to organizer
     const { data: organizerTransfer } = await axios.post(
       `${paystackUrl}/transfer`,
@@ -93,7 +110,7 @@ export const withdrawMoney = async (req, res) => {
         source: "balance",
         amount: amountSent * 100,
         recipient: receiver.data.recipient_code,
-        reference: uuidv4(),
+        reference: organizerReference,
         currency: "GHS",
         reason: "settlement of organizer campaign",
       },
@@ -105,7 +122,10 @@ export const withdrawMoney = async (req, res) => {
       },
     );
 
-    console.log("platform receiver is", ENV.recipientCode);
+    await Withdrawal.findByIdAndUpdate(newWithdrawal._id, {
+      transferCode: organizerTransfer.data.transfer_code,
+    });
+
     // transfer to platform account
     await axios.post(
       `${paystackUrl}/transfer`,
@@ -113,7 +133,7 @@ export const withdrawMoney = async (req, res) => {
         source: "balance",
         amount: platformFee * 100,
         recipient: ENV.recipientCode,
-        reference: uuidv4(),
+        reference: platformReference,
         currency: "GHS",
         reason: "settlement of platform fees",
       },
@@ -125,24 +145,6 @@ export const withdrawMoney = async (req, res) => {
       },
     );
 
-    const newWithdrawal = new Withdrawal({
-      campaign: campaignId,
-      organizer: organizerId,
-      totalRaised: campaign.totalRaised,
-      fee: platformFee,
-      amountSent,
-      paystackTransferReference: organizerTransfer.data.reference,
-      status: "pending",
-    });
-
-    await newWithdrawal.save();
-    await Campaign.findOneAndUpdate(
-      { _id: campaignId },
-      {
-        withdrawn: true,
-      },
-    );
-
     return res.status(200).json({
       success: true,
       message: "money withdrawal initiated. You'll soon receive your payment",
@@ -151,6 +153,12 @@ export const withdrawMoney = async (req, res) => {
     });
   } catch (error) {
     console.log("withdrawal error", error.response?.data);
+    if (organizerReference) {
+      await Withdrawal.findOneAndUpdate(
+        { paystackTransferReference: organizerReference },
+        { status: "failed" },
+      );
+    }
     return res.status(500).json({
       success: false,
       message: "oops something broke",
