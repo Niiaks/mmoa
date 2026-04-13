@@ -8,13 +8,12 @@ export const webhookController = async (req, res) => {
   //validate event
   const hash = crypto
     .createHmac("sha512", ENV.paystackSecretKey)
-    .update(JSON.stringify(req.body))
+    .update(req.body)
     .digest("hex");
   if (hash === req.headers["x-paystack-signature"]) {
     // Retrieve the request's body
-    const event = req.body;
+    const event = JSON.parse(req.body.toString());
     // Do something with event
-
     switch (event.event) {
       case "charge.success": {
         const contribution = await Contribution.findOne({

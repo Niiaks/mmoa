@@ -6,6 +6,7 @@ import { detectNetwork } from "../helpers/detectNetwork.js";
 import { v4 as uuidv4 } from "uuid";
 import { ENV } from "../config/env.js";
 import Withdrawal from "../models/withdrawals.js";
+import { toLocale } from "../helpers/toLocale.js";
 
 const paystackUrl = "https://api.paystack.co";
 
@@ -71,7 +72,7 @@ export const withdrawMoney = async (req, res) => {
       {
         type: "mobile_money",
         name: organizer.name,
-        account_number: momoNumber,
+        account_number: toLocale(momoNumber),
         bank_code: code,
         currency: "GHS",
         description: "organizer withdrawal account",
@@ -84,6 +85,7 @@ export const withdrawMoney = async (req, res) => {
       },
     );
 
+    console.log("recipient code", receiver.data.recipient_code);
     // transfer to organizer
     const { data: organizerTransfer } = await axios.post(
       `${paystackUrl}/transfer`,
@@ -103,6 +105,7 @@ export const withdrawMoney = async (req, res) => {
       },
     );
 
+    console.log("platform receiver is", ENV.recipientCode);
     // transfer to platform account
     await axios.post(
       `${paystackUrl}/transfer`,
@@ -147,7 +150,7 @@ export const withdrawMoney = async (req, res) => {
       fee: platformFee,
     });
   } catch (error) {
-    console.log("withdrawal error", error.message);
+    console.log("withdrawal error", error.response?.data);
     return res.status(500).json({
       success: false,
       message: "oops something broke",

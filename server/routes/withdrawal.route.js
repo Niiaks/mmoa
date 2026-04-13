@@ -4,4 +4,4 @@ import { withdrawMoney } from "../controllers/withdrawal.controller.js";
 
 export const withdrawalRouter = express.Router();
 
-withdrawalRouter.post("/", protectedRoute, withdrawMoney);
+withdrawalRouter.post("/:id", protectedRoute, withdrawMoney);
