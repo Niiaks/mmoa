@@ -36,13 +36,6 @@ export const registerUser = async (req, res) => {
       });
     }
 
-    if (phone.length < 13) {
-      return res.status(400).json({
-        success: false,
-        message: "validation(error): invalid phone number",
-      });
-    }
-
     const user = await User.findOne({ email });
     if (user) {
       return res

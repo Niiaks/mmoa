@@ -12,7 +12,7 @@ import { withdrawalRouter } from "./routes/withdrawal.route.js";
 const app = express();
 
 app.use(
-  "/api/v1/webhook",
+  "/api/v1/webhooks/paystack",
   express.raw({ type: "application/json" }),
   webhookRouter,
 );
