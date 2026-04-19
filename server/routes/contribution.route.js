@@ -9,5 +9,5 @@ import { protectedRoute } from "../middleware/auth.js";
 export const contributionRouter = express.Router();
 
 contributionRouter.post("/", initializePayment);
-contributionRouter.get("/verify", verifyPayment);
+contributionRouter.get("/verify/:reference", verifyPayment);
 contributionRouter.get("/:campaignId", protectedRoute, getContributions);

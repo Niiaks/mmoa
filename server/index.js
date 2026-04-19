@@ -8,7 +8,7 @@ import { campaignRouter } from "./routes/campaign.route.js";
 import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.js";
 import { withdrawalRouter } from "./routes/withdrawal.route.js";
-
+import cors from "cors";
 const app = express();
 
 app.use(
@@ -19,6 +19,15 @@ app.use(
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: [
+      ENV.clientUrl,
+      "https://ingredients-month-cotton-certainly.trycloudflare.com",
+    ],
+    credentials: true,
+  }),
+);
 
 app.get("/health", (req, res) => {
   res.status(200).json({

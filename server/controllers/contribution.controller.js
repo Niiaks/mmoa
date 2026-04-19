@@ -75,7 +75,7 @@ export const initializePayment = async (req, res) => {
 
 export const verifyPayment = async (req, res) => {
   try {
-    const reference = req.query.reference;
+    const reference = req.params.reference;
 
     if (!reference) {
       return res.status(400).json({
@@ -86,19 +86,26 @@ export const verifyPayment = async (req, res) => {
 
     const contribution = await Contribution.findOne({
       paystackReference: reference,
-    });
+    }).populate("campaign");
+
     if (!contribution) {
       return res.status(404).json({
         success: false,
         message: "contribution not found",
       });
     }
+
     if (contribution.status === "successful") {
       return res.status(200).json({
         success: true,
         message: "payment already verified",
+        data: {
+          amount: contribution.amount,
+          campaign: contribution.campaign.title,
+        },
       });
     }
+
     const { data } = await axios.get(
       `${paystackUrl}/transaction/verify/${reference}`,
       {
@@ -111,16 +118,18 @@ export const verifyPayment = async (req, res) => {
     if (data.data.status === "success") {
       contribution.status = "successful";
       await contribution.save();
-      await Campaign.findOneAndUpdate(
-        { _id: data.data.metadata.campaign_id },
-        {
-          $inc: { totalRaised: contribution.amount },
-        },
-      );
+
+      await Campaign.findByIdAndUpdate(contribution.campaign._id, {
+        $inc: { totalRaised: contribution.amount },
+      });
 
       return res.status(200).json({
         success: true,
         message: "payment verified",
+        data: {
+          amount: contribution.amount,
+          campaign: contribution.campaign.title,
+        },
       });
     } else {
       contribution.status = "failed";

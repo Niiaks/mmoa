@@ -102,6 +102,11 @@ export const getCampaign = async (req, res) => {
     if (dayjs().isAfter(campaign.deadline) && campaign.status === "active") {
       campaign.status = "expired";
       await campaign.save();
+
+      return res.status(400).json({
+        success: false,
+        message: "campaign has expired",
+      });
     }
 
     return res.status(200).json({
@@ -121,6 +126,30 @@ export const getCampaign = async (req, res) => {
       meta: {
         requireContributorName: campaign.requireContributorName,
       },
+    });
+  } catch (error) {
+    console.error("error getting campaign", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Oops Something broke" });
+  }
+};
+
+export const getCampaignById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const campaign = await Campaign.findById(id);
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        message: "no campaign found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "gotten campaign",
+      campaign,
     });
   } catch (error) {
     console.error("error getting campaign", error.message);

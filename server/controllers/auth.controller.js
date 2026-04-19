@@ -98,12 +98,12 @@ export const login = async (req, res) => {
     });
   }
 
-  const token = generateToken(user._id, user.email);
+  const token = generateToken(user._id, user.email, user.name);
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: ENV.nodeEnv === "production",
-    sameSite: "strict",
+    secure: true,
+    sameSite: "none",
     expires: new Date(Date.now() + 900000),
   });
 
@@ -116,4 +116,25 @@ export const login = async (req, res) => {
       phone: user.phone,
     },
   });
+};
+
+export const getCurrentUser = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email,
+      },
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
 };

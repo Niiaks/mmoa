@@ -16,6 +16,7 @@ export const protectedRoute = (req, res, next) => {
     const user = {
       id: decoded.sub,
       email: decoded.email,
+      name: decoded.name,
     };
     req.user = user;
 
