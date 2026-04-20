@@ -36,6 +36,12 @@ export const registerUser = async (req, res) => {
       });
     }
 
+    if (phone.length < 10) {
+      return res.status(400).json({
+        success: false,
+        message: "validation(error): invalid phone number",
+      });
+    }
     const user = await User.findOne({ email });
     if (user) {
       return res
@@ -46,6 +52,13 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await hashPassword(password);
 
     const normalizedPhone = normalizePhone(phone);
+
+    if (!normalizedPhone) {
+      return res.status(400).json({
+        success: false,
+        message: "validation(error): invalid phone number",
+      });
+    }
 
     const newUser = new User({
       name,
