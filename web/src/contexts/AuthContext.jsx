@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const {
     data: user,
     isLoading,
-    error
+    error,
   } = useQuery({
     queryKey: ["auth", "me"],
     queryFn: getCurrentUser,
@@ -32,7 +32,8 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         error,
         logout,
-        refetchUser: () => queryClient.invalidateQueries({ queryKey: ["auth", "me"] }),
+        refetchUser: () =>
+          queryClient.invalidateQueries({ queryKey: ["auth", "me"] }),
       }}
     >
       {children}

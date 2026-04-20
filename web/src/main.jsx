@@ -22,7 +22,15 @@ import HowItWorks from "./pages/mmoa/How";
 import PrivacyPolicy from "./pages/mmoa/Privacy";
 import TermsOfService from "./pages/mmoa/Terms";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
