@@ -102,8 +102,8 @@ export const login = async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: ENV.nodeEnv === "production",
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
     expires: new Date(Date.now() + 900000),
   });
 
