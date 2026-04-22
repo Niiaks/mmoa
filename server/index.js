@@ -21,10 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [
-      ENV.clientUrl,
-      "https://ingredients-month-cotton-certainly.trycloudflare.com",
-    ],
+    origin: ENV.clientUrl,
     credentials: true,
   }),
 );
