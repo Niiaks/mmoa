@@ -310,3 +310,60 @@ async function initiatePlatformFeeTransfer({
     );
   }
 }
+
+
+export const previewWithdrawal = async (req, res) => {
+  try {
+    const campaignId = req.params.id;
+    const organizerId = req.user.id;
+
+    const campaign = await Campaign.findOne({
+      _id: campaignId,
+      organizer: organizerId,
+    });
+
+    if (!campaign) {
+      return res.status(404).json({
+        success: false,
+        message: "Campaign not found or does not belong to you",
+      });
+    }
+
+    const [totalWithdrawnResult] = await Withdrawal.aggregate([
+      { $match: { campaign: campaign._id, status: "successful" } },
+      { $group: { _id: null, total: { $sum: "$amountSent" } } },
+    ]);
+
+    const alreadyWithdrawn = totalWithdrawnResult?.total ?? 0;
+    const availableBalance = ghsRound(campaign.totalRaised - alreadyWithdrawn);
+
+    const platformFee = ghsRound(availableBalance * FEES.platformFeeRate);
+    const paystackMoMoFee = FEES.paystackMoMoFee;
+    const amountSent = ghsRound(
+      availableBalance - platformFee - paystackMoMoFee,
+    );
+
+    return res.status(200).json({
+      success: true,
+      breakdown: {
+        availableBalance: availableBalance.toFixed(2),
+        platformFee: platformFee.toFixed(2),
+        paystackMoMoFee: paystackMoMoFee.toFixed(2),
+        totalFees: (platformFee + paystackMoMoFee).toFixed(2),
+        amountYouWillReceive: amountSent.toFixed(2),
+        canWithdraw: amountSent >= FEES.minNetAmount && amountSent <= FEES.maxNetAmount,
+      },
+    });
+  } catch (error) {
+    console.error("Preview withdrawal error:", error);
+
+    const clientMessage =
+      error.response?.data?.message ??
+      "Something went wrong processing your withdrawal. Please try again.";
+
+    return res.status(500).json({
+      success: false,
+      message: clientMessage,
+    });
+  }
+};
