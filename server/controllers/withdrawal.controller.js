@@ -334,14 +334,21 @@ export const previewWithdrawal = async (req, res) => {
       { $group: { _id: null, total: { $sum: "$amountSent" } } },
     ]);
 
+    const isPendingWithdrawal = await Withdrawal.exists({
+      campaign: campaignId,
+      status: "pending",
+    });
+
     const alreadyWithdrawn = totalWithdrawnResult?.total ?? 0;
     const availableBalance = ghsRound(campaign.totalRaised - alreadyWithdrawn);
 
     const platformFee = ghsRound(availableBalance * FEES.platformFeeRate);
     const paystackMoMoFee = FEES.paystackMoMoFee;
-    const amountSent = ghsRound(
+    const amountSent = Math.max(0, ghsRound(
       availableBalance - platformFee - paystackMoMoFee,
-    );
+    ));
+
+
 
     return res.status(200).json({
       success: true,
@@ -351,7 +358,7 @@ export const previewWithdrawal = async (req, res) => {
         paystackMoMoFee: paystackMoMoFee.toFixed(2),
         totalFees: (platformFee + paystackMoMoFee).toFixed(2),
         amountYouWillReceive: amountSent.toFixed(2),
-        canWithdraw: amountSent >= FEES.minNetAmount && amountSent <= FEES.maxNetAmount,
+        canWithdraw: !isPendingWithdrawal && amountSent >= FEES.minNetAmount && amountSent <= FEES.maxNetAmount,
       },
     });
   } catch (error) {
