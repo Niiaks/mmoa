@@ -4,15 +4,21 @@ import { toast } from "sonner";
 
 
 export const usePreviewWithdrawal = (campaignId) => {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["preview-withdrawal", campaignId],
     queryFn: () => getPreviewWithdrawal(campaignId),
     enabled: !!campaignId,
-    onError: (error) => {
+
+  });
+
+  useEffect(() => {
+    if (query.isError) {
       const message =
-        error.response?.data?.message ||
+        query.error.response?.data?.message ||
         "Failed to fetch preview. Please try again.";
       toast.error(message);
     }
-  });
+  }, [query.isError]);
+
+  return query;
 }
