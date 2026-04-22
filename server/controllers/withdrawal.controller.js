@@ -7,6 +7,7 @@ import { toLocale } from "../helpers/toLocale.js";
 import { v4 as uuidv4 } from "uuid";
 import { ENV } from "../config/env.js";
 import Withdrawal from "../models/withdrawals.js";
+import { isValidObjectId } from "mongoose";
 
 const PAYSTACK_URL = "https://api.paystack.co";
 
@@ -39,6 +40,13 @@ export const withdrawMoney = async (req, res) => {
   try {
     const campaignId = req.params.id;
     const organizerId = req.user.id;
+
+    if (!isValidObjectId(campaignId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid campaign Id",
+      });
+    }
 
     const rawMomo = req.body.momoNumber;
     if (!rawMomo) {
@@ -210,6 +218,13 @@ export const withdrawMoney = async (req, res) => {
   } catch (error) {
     console.error("Withdrawal error:", error.response?.data ?? error.message);
 
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid campaign Id",
+      });
+    }
+
     // Mark the withdrawal failed if it was already saved.
     if (withdrawalDoc?._id) {
       await Withdrawal.findByIdAndUpdate(withdrawalDoc._id, {
@@ -317,6 +332,13 @@ export const previewWithdrawal = async (req, res) => {
     const campaignId = req.params.id;
     const organizerId = req.user.id;
 
+    if (!isValidObjectId(campaignId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid campaign Id",
+      });
+    }
+
     const campaign = await Campaign.findOne({
       _id: campaignId,
       organizer: organizerId,
@@ -363,6 +385,13 @@ export const previewWithdrawal = async (req, res) => {
     });
   } catch (error) {
     console.error("Preview withdrawal error:", error);
+
+    if (error.name === "CastError") {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid campaign Id",
+      });
+    }
 
     const clientMessage =
       error.response?.data?.message ??
