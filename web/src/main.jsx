@@ -21,6 +21,7 @@ import Loader from "./components/Loader";
 import HowItWorks from "./pages/mmoa/How";
 import PrivacyPolicy from "./pages/mmoa/Privacy";
 import TermsOfService from "./pages/mmoa/Terms";
+import Withdraw from "./pages/home/withdraw";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <Dashboard />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/withdraw/:id",
+    element: (
+      <ProtectedRoute>
+        <Withdraw />
       </ProtectedRoute>
     ),
   },
