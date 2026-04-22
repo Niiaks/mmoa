@@ -34,9 +34,9 @@ function CampaignDetail() {
 
   const recentContributors = contributions?.contributions
     ? contributions.contributions
-        .slice()
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 10)
+      .slice()
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      .slice(0, 10)
     : [];
 
   if (isPending || isContributionsPending) {
@@ -183,7 +183,9 @@ function CampaignDetail() {
                 </h3>
 
                 {/* Primary Action */}
-                <Button size="lg">Withdraw Funds</Button>
+                <Button size="lg" asChild>
+                  <Link to={`/withdraw/${campaign._id}`}>Withdraw Funds</Link>
+                </Button>
 
                 {/* Secondary */}
                 {campaign.status !== "expired" && (
