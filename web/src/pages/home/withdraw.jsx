@@ -8,20 +8,20 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { useGetCampaignId } from "@/hooks/campaign/useGetCampaignId";
 import { useWithdrawal } from "@/hooks/withdrawal/useWithdrawal";
+import { usePreviewWithdrawal } from "@/hooks/withdrawal/usePreviewWithdrawal";
+import Loader from "@/components/Loader";
 
 function Withdraw() {
   const [momoNumber, setMomoNumber] = useState("");
   const { id } = useParams();
   const { data } = useGetCampaignId(id);
   const { mutate: withdraw, isPending } = useWithdrawal()
+  const { data: previewWithdrawal, isLoading: isPreviewLoading } = usePreviewWithdrawal(id);
 
   const campaign = data?.campaign;
+  const preview = previewWithdrawal?.breakdown;
   const navigate = useNavigate();
 
-
-  const availableToWithdraw = (campaign?.totalRaised || 0) * 0.025;
-  const platformFee = (campaign?.totalRaised || 0) * 0.025;
-  const totalToReceive = (campaign?.totalRaised || 0) - platformFee;
 
   const handleWithdraw = (e) => {
     e.preventDefault();
@@ -29,8 +29,15 @@ function Withdraw() {
     withdraw({
       campaignId: campaign?._id,
       momoNumber: momoNumber,
+    }, {
+      onSuccess: () => {
+        setMomoNumber("");
+      },
     })
+  }
 
+  if (isPreviewLoading) {
+    return <Loader />
   }
   return (
     <div className="min-h-screen">
@@ -67,7 +74,7 @@ function Withdraw() {
               </div>
 
               <p className="text-3xl font-bold tracking-tight text-[#e8873a]">
-                GH₵ {availableToWithdraw}
+                GH₵ {preview?.availableBalance || 0}
               </p>
 
               <p className="mt-2 text-sm text-slate-400">
@@ -84,13 +91,25 @@ function Withdraw() {
               <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Total raised</span>
-                  <span className="font-medium text-slate-800">GH₵ {campaign?.totalRaised || 0}</span>
+                  <span className="font-medium text-slate-800">GH₵ {preview?.totalRaised || 0}</span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Platform fee (2.5%)</span>
-                  <span className="font-medium text-slate-800">− GH₵ {platformFee || 0}</span>
+                  <span className="font-medium text-slate-800">GH₵ {preview?.platformFee || 0}</span>
                 </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Paystack Momo fee</span>
+                  <span className="font-medium text-slate-800">GH₵ {preview?.paystackMoMoFee || 0}</span>
+                </div>
+
+
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Total fees</span>
+                  <span className="font-medium text-slate-800">GH₵ {preview?.totalFees || 0}</span>
+                </div>
+
 
                 <Separator />
 
@@ -98,7 +117,7 @@ function Withdraw() {
                   <span className="font-semibold text-slate-900">
                     You receive
                   </span>
-                  <span className="font-bold text-[#bb4d00]">GH₵ {totalToReceive || 0}</span>
+                  <span className="font-bold text-[#bb4d00]">GH₵ {preview?.amountYouWillReceive || 0}</span>
                 </div>
               </div>
             </div>
@@ -123,8 +142,8 @@ function Withdraw() {
             </div>
 
             {/* ── CTA ── */}
-            <Button onClick={handleWithdraw} className="w-full" size="lg" disabled={!momoNumber || totalToReceive === 0 || isPending}>
-              {isPending ? "withdrawing..." : `Withdraw GH₵ ${totalToReceive || 0}`}
+            <Button onClick={handleWithdraw} className="w-full" size="lg" disabled={!momoNumber || isPending || !preview?.canWithdraw}>
+              {isPending ? "withdrawing..." : `Withdraw GH₵ ${preview?.amountYouWillReceive || 0}`}
             </Button>
 
             <p className="text-xs text-center text-slate-400">
