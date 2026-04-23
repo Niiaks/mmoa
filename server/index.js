@@ -41,7 +41,7 @@ app.use("/api/v1/withdrawals", withdrawalRouter);
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log for debugging
   res.status(err.statusCode || 500).json({
-    status: "error",
+    success: "false",
     message: err.message || "Oops something broke",
   });
 });
@@ -77,4 +77,6 @@ process.on("SIGTERM", shutdown);
 process.on("uncaughtException", (err) => {
   console.error("CRITICAL:", err);
   process.exit(1);
+  shutdown();
+  setTimeout(() => process.exit(1), 5000).unref();
 });
