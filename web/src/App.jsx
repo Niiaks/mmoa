@@ -3,7 +3,6 @@ import { Button } from "./components/ui/button";
 
 function App() {
   const navigate = useNavigate();
-  const isLoggedIn = false;
 
   return (
     <div className="min-h-screen">
@@ -31,14 +30,7 @@ function App() {
             family, medical emergency, or any urgent need.
           </p>
           <div className="flex gap-4">
-            <Button
-              onClick={
-                isLoggedIn
-                  ? () => navigate("/dashboard")
-                  : () => navigate("/login")
-              }
-              size="lg"
-            >
+            <Button onClick={() => navigate("/login")} size="lg">
               Start a Campaign
             </Button>
             <Button asChild variant="outline" size="lg">
