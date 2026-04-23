@@ -119,10 +119,6 @@ export const verifyPayment = async (req, res) => {
       contribution.status = "successful";
       await contribution.save();
 
-      await Campaign.findByIdAndUpdate(contribution.campaign._id, {
-        $inc: { totalRaised: contribution.amount },
-      });
-
       return res.status(200).json({
         success: true,
         message: "payment verified",
