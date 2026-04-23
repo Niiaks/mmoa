@@ -37,6 +37,15 @@ app.use("/api/v1/contributions", contributionRouter);
 app.use("/api/v1/campaigns", campaignRouter);
 app.use("/api/v1/withdrawals", withdrawalRouter);
 
+//global error
+app.use((err, req, res, next) => {
+  console.error(err.stack); // Log for debugging
+  res.status(err.statusCode || 500).json({
+    status: "error",
+    message: err.message || "Oops something broke",
+  });
+});
+
 let server;
 
 const startServer = async () => {
@@ -65,3 +74,7 @@ const shutdown = () => {
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
+process.on("uncaughtException", (err) => {
+  console.error("CRITICAL:", err);
+  process.exit(1);
+});
