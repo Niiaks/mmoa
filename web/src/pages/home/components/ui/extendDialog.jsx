@@ -15,39 +15,48 @@ import { Label } from "@/components/ui/label";
 import { useExtendCampaign } from "@/hooks/campaign/useExtendCampaign";
 import { useState } from "react";
 
-export function ExtendDialog({ campaignId }) {
+export function ExtendDialog({ campaign }) {
   const [open, setOpen] = useState(false);
-  const [deadline, setDeadline] = useState("");
+  const [deadline, setDeadline] = useState(campaign.deadline.split("T")[0]); // Initialize with current deadline (date portion only)
 
-  const { mutate: extendCampaign, isPending } = useExtendCampaign(campaignId);
+  const { mutate: extendCampaign, isPending } = useExtendCampaign(campaign._id);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    extendCampaign(
-      { deadline },
-      {
-        onSuccess: () => {
-          setOpen(false);
-        },
+    extendCampaign(deadline, {
+      onSuccess: () => {
+        setOpen(false);
       },
-    );
+    });
+  };
+
+  const isTooEarly = () => {
+    if (!deadline) return true;
+    const chosen = new Date(deadline);
+    const current = new Date(campaign.deadline);
+    // Compare date portions only
+    chosen.setHours(0, 0, 0, 0);
+    current.setHours(0, 0, 0, 0);
+    return chosen <= current;
   };
   return (
-    <Dialog open={open} onOpenChange={setOpen} className="w-full">
-      <form onSubmit={handleSubmit}>
-        <DialogTrigger asChild>
-          <Button variant="outline" className="w-full h-10 font-semibold">
-            Extend Deadline
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full h-10 font-semibold">
+          Extend Deadline
+        </Button>
+      </DialogTrigger>
+
+      <DialogContent className="sm:max-w-sm">
+        <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Extend Deadline</DialogTitle>
             <DialogDescription>
-              Extend the deadline for this campaign. Click save when you&apos;re
+              Extend the deadline for this campaign. Click save when you're
               done.
             </DialogDescription>
           </DialogHeader>
+
           <FieldGroup>
             <Field>
               <Label htmlFor="deadline">Deadline</Label>
@@ -55,21 +64,25 @@ export function ExtendDialog({ campaignId }) {
                 id="deadline"
                 name="deadline"
                 type="date"
-                defaultValue={deadline}
+                value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
               />
             </Field>
           </FieldGroup>
-          <DialogFooter>
+
+          <DialogFooter className="pt-3">
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" disabled={isPending}>
+            <Button
+              type="submit"
+              disabled={isPending || !deadline || isTooEarly()}
+            >
               {isPending ? "Saving..." : "Save changes"}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
