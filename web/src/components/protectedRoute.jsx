@@ -1,18 +1,13 @@
 import { useAuth } from "@/contexts/AuthContext";
-import { Navigate, useLocation } from "react-router";
-import { Spinner } from "./ui/spinner";
-import Loader from "./Loader";
+import { Navigate } from "react-router";
 
 function ProtectedRoute({ children }) {
   const { user, isLoading } = useAuth();
-  const location = useLocation();
 
-  if (isLoading) {
-    return <Loader />;
-  }
+  if (isLoading) return null;
 
   if (!user) {
-    return <Navigate to="/" state={{ from: location }} replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
