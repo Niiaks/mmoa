@@ -29,17 +29,7 @@ function Register() {
       { email, password, name, phone },
       {
         onSuccess: () => {
-          loginUser(
-            { email, password },
-            {
-              onError: (error) => {
-                const message =
-                  error.response?.data?.message ||
-                  "Login Failed. Please check your credentials and try again.";
-                toast.error(message);
-              },
-            },
-          );
+          loginUser({ email, password });
         },
       },
     );
