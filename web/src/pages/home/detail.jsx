@@ -1,4 +1,4 @@
-import { ArrowLeft, Copy, Share } from "lucide-react";
+import { ArrowLeft, Copy, Share, Timer } from "lucide-react";
 import { Link, useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,9 +34,9 @@ function CampaignDetail() {
 
   const recentContributors = contributions?.contributions
     ? contributions.contributions
-      .slice()
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-      .slice(0, 10)
+        .slice()
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 10)
     : [];
 
   if (isPending || isContributionsPending) {
@@ -79,6 +79,14 @@ function CampaignDetail() {
                 >
                   {campaign.status}
                 </Badge>
+                <span className="text-sm text-slate-500 ml-auto items-center flex">
+                  <Timer className="h-4 w-4 inline-block mr-1 text-slate-400" />
+                  {new Date(campaign.deadline).toLocaleDateString(undefined, {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
               </div>
 
               <h2 className="text-xl font-semibold text-slate-900 mb-4">
@@ -97,7 +105,7 @@ function CampaignDetail() {
               </div>
             </div>
             {/* Contributors */}
-            {recentContributors.length > 0 && (
+            {recentContributors.length > 0 ? (
               <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-slate-900 mb-4">
@@ -134,6 +142,15 @@ function CampaignDetail() {
                     ))}
                   </TableBody>
                 </Table>
+              </div>
+            ) : (
+              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">
+                  No contributions yet
+                </h3>
+                <p className="text-sm text-slate-600">
+                  Share your campaign link to get contributions from supporters.
+                </p>
               </div>
             )}
           </div>
@@ -189,7 +206,7 @@ function CampaignDetail() {
 
                 {/* Secondary */}
                 {campaign.status !== "expired" && (
-                  <ExtendDialog campaignId={campaign._id} />
+                  <ExtendDialog campaign={campaign} />
                 )}
                 <CloseCampaignDialog campaignId={campaign._id} />
               </div>
