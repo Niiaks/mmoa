@@ -187,7 +187,7 @@ export const closeCampaign = async (req, res) => {
     const campaign = await Campaign.findOneAndUpdate(
       { _id: campaignId, organizer: organizerId },
       { status: "closed" },
-      { new: true },
+      { returnDocument: "after" },
     );
     if (!campaign) {
       return res.status(403).json({
@@ -235,7 +235,7 @@ export const extendDeadline = async (req, res) => {
     const campaign = await Campaign.findOneAndUpdate(
       { _id: campaignId, organizer: organizerId },
       { deadline },
-      { new: true },
+      { returnDocument: "after" },
     );
     if (!campaign) {
       return res.status(403).json({
