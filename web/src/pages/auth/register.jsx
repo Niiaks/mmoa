@@ -20,7 +20,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const { mutate: registerUser, isPending, error } = useRegister();
+  const { mutate: registerUser, isPending } = useRegister();
   const { mutate: loginUser } = useLogin();
 
   const handleSubmit = (e) => {
@@ -29,7 +29,17 @@ function Register() {
       { email, password, name, phone },
       {
         onSuccess: () => {
-          loginUser({ email, password });
+          loginUser(
+            { email, password },
+            {
+              onError: (error) => {
+                const message =
+                  error.response?.data?.message ||
+                  "Login Failed. Please check your credentials and try again.";
+                toast.error(message);
+              },
+            },
+          );
         },
       },
     );
