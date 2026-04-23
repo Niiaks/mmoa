@@ -12,7 +12,7 @@ import {
 
 function NotFound() {
   return (
-    <div className="min-h-screen bg-slate-5">
+    <div className="min-h-screen">
       <main className="container mx-auto max-w-5xl px-6 sm:px-12 w-full pt-8 pb-16">
         {/* Header */}
         <header className="flex items-center justify-between py-6">
