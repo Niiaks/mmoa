@@ -8,6 +8,7 @@ import {
   RouterProvider,
   Outlet,
   Navigate,
+  useRouteError,
 } from "react-router";
 
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
@@ -40,6 +41,11 @@ const queryClient = new QueryClient({
   },
 });
 
+function RouteErrorElement() {
+  const error = useRouteError();
+  return <ErrorFallback error={error} resetErrorBoundary={() => {}} />;
+}
+
 function HomeRouter() {
   const { isLoading } = useAuth();
 
@@ -57,7 +63,7 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeRouter />,
-    errorElement: <ErrorFallback />,
+    errorElement: <RouteErrorElement />,
     children: [
       { index: true, element: <HomeRedirect /> },
 
@@ -98,7 +104,7 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ErrorBoundary
       fallbackRender={({ error, resetErrorBoundary }) => (
-        <ErrorFallback error={error} reset={resetErrorBoundary} />
+        <ErrorFallback error={error} resetErrorBoundary={resetErrorBoundary} />
       )}
     >
       <QueryClientProvider client={queryClient}>
