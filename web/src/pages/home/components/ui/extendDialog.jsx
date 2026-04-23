@@ -17,7 +17,11 @@ import { useState } from "react";
 
 export function ExtendDialog({ campaign }) {
   const [open, setOpen] = useState(false);
-  const [deadline, setDeadline] = useState(campaign.deadline.split("T")[0]); // Initialize with current deadline (date portion only)
+  const [deadline, setDeadline] = useState(
+    typeof campaign?.deadline === "string"
+      ? campaign.deadline.slice(0, 10)
+      : "",
+  );
 
   const { mutate: extendCampaign, isPending } = useExtendCampaign(campaign._id);
 
@@ -32,12 +36,12 @@ export function ExtendDialog({ campaign }) {
 
   const isTooEarly = () => {
     if (!deadline) return true;
-    const chosen = new Date(deadline);
-    const current = new Date(campaign.deadline);
-    // Compare date portions only
-    chosen.setHours(0, 0, 0, 0);
-    current.setHours(0, 0, 0, 0);
-    return chosen <= current;
+    const current =
+      typeof campaign?.deadline === "string"
+        ? campaign.deadline.slice(0, 10)
+        : "";
+    if (!current) return true;
+    return deadline <= current;
   };
   return (
     <Dialog open={open} onOpenChange={setOpen}>
