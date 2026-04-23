@@ -25,7 +25,7 @@ export const closeCampaign = async (campaignId) => {
   return data;
 };
 
-export const extendCampaignDeadline = async (campaignId) => {
-  const { data } = await api.patch(`/api/v1/campaigns/${campaignId}/extend`);
+export const extendCampaignDeadline = async ({ campaignId, deadline }) => {
+  const { data } = await api.patch(`/api/v1/campaigns/${campaignId}/extend`, { deadline });
   return data;
 };
