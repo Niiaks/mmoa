@@ -73,6 +73,12 @@ const shutdown = () => {
     await disconnectDB();
     console.log("server closed");
   });
+
+  //force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error("forcefully shutting down");
+    process.exit(1);
+  }, 30000).unref();
 };
 
 process.on("SIGINT", shutdown);
