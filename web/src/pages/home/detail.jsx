@@ -193,24 +193,25 @@ function CampaignDetail() {
             )}
 
             {/* Actions */}
-            {campaign.status === "active" && campaign.status !== "expired" && (
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-3">
-                <h3 className="font-semibold text-slate-900 mb-2">
-                  Manage Campaign
-                </h3>
+            {campaign.status === "active" ||
+              (campaign.status !== "expired" && (
+                <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col gap-3">
+                  <h3 className="font-semibold text-slate-900 mb-2">
+                    Manage Campaign
+                  </h3>
 
-                {/* Primary Action */}
-                <Button size="lg" asChild>
-                  <Link to={`/withdraw/${campaign._id}`}>Withdraw Funds</Link>
-                </Button>
+                  {/* Primary Action */}
+                  <Button size="lg" asChild>
+                    <Link to={`/withdraw/${campaign._id}`}>Withdraw Funds</Link>
+                  </Button>
 
-                {/* Secondary */}
-                {campaign.status !== "expired" && (
-                  <ExtendDialog campaign={campaign} />
-                )}
-                <CloseCampaignDialog campaignId={campaign._id} />
-              </div>
-            )}
+                  {/* Secondary */}
+                  {campaign.status !== "expired" && (
+                    <ExtendDialog campaign={campaign} />
+                  )}
+                  <CloseCampaignDialog campaignId={campaign._id} />
+                </div>
+              ))}
           </div>
         </div>
       </main>
