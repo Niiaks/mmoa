@@ -4,7 +4,7 @@ import User from "../models/user.js";
 import { normalizePhone } from "../helpers/phoneNormalizer.js";
 import { detectNetwork } from "../helpers/detectNetwork.js";
 import { toLocale } from "../helpers/toLocale.js";
-import { v4 as uuidv4 } from "uuid";
+import { randomUUID } from "crypto";
 import { ENV } from "../config/env.js";
 import Withdrawal from "../models/withdrawals.js";
 import { isValidObjectId } from "mongoose";
@@ -70,7 +70,7 @@ export const withdrawMoney = async (req, res) => {
       return res.status(400).json({
         success: false,
         message:
-          "Unsupported mobile network. Please use MTN, Vodafone/Telecel, or AirtelTigo",
+          "Unsupported mobile network. Please use MTN, Telecel, or AirtelTigo",
       });
     }
 
@@ -158,7 +158,7 @@ export const withdrawMoney = async (req, res) => {
 
     const recipientCode = recipientResponse.data.recipient_code;
 
-    const reference = uuidv4();
+    const reference = randomUUID();
 
     withdrawalDoc = await Withdrawal.create({
       campaign: campaignId,
@@ -276,7 +276,7 @@ async function initiatePlatformFeeTransfer({
     return;
   }
 
-  const platformFeeReference = uuidv4();
+  const platformFeeReference = randomUUID();
 
   // Record the reference immediately so the webhook can match the transfer
   // even if the axios call succeeds but the process crashes before we save
@@ -326,7 +326,6 @@ async function initiatePlatformFeeTransfer({
   }
 }
 
-
 export const previewWithdrawal = async (req, res) => {
   try {
     const campaignId = req.params.id;
@@ -366,11 +365,10 @@ export const previewWithdrawal = async (req, res) => {
 
     const platformFee = ghsRound(availableBalance * FEES.platformFeeRate);
     const paystackMoMoFee = FEES.paystackMoMoFee;
-    const amountSent = Math.max(0, ghsRound(
-      availableBalance - platformFee - paystackMoMoFee,
-    ));
-
-
+    const amountSent = Math.max(
+      0,
+      ghsRound(availableBalance - platformFee - paystackMoMoFee),
+    );
 
     return res.status(200).json({
       success: true,
@@ -380,7 +378,10 @@ export const previewWithdrawal = async (req, res) => {
         paystackMoMoFee: paystackMoMoFee.toFixed(2),
         totalFees: (platformFee + paystackMoMoFee).toFixed(2),
         amountYouWillReceive: amountSent.toFixed(2),
-        canWithdraw: !isPendingWithdrawal && amountSent >= FEES.minNetAmount && amountSent <= FEES.maxNetAmount,
+        canWithdraw:
+          !isPendingWithdrawal &&
+          amountSent >= FEES.minNetAmount &&
+          amountSent <= FEES.maxNetAmount,
       },
     });
   } catch (error) {

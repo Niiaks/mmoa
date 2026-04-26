@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import { ENV } from "./config/env.js";
 import { withdrawalRouter } from "./routes/withdrawal.route.js";
 import cors from "cors";
+import helmet from "helmet";
+import mongoSanitize from "express-mongo-sanitize";
 const app = express();
 
 app.use(
@@ -16,15 +18,16 @@ app.use(
   express.raw({ type: "application/json" }),
   webhookRouter,
 );
-
-app.use(express.json());
-app.use(cookieParser());
+app.use(helmet());
 app.use(
   cors({
     origin: ENV.clientUrl,
     credentials: true,
   }),
 );
+app.use(express.json());
+app.use(cookieParser());
+app.use(mongoSanitize());
 
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -41,7 +44,7 @@ app.use("/api/v1/withdrawals", withdrawalRouter);
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log for debugging
   res.status(err.statusCode || 500).json({
-    success: "false",
+    success: false,
     message: err.message || "Oops something broke",
   });
 });
@@ -70,13 +73,18 @@ const shutdown = () => {
     await disconnectDB();
     console.log("server closed");
   });
+
+  //force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error("forcefully shutting down");
+    process.exit(1);
+  }, 30000).unref();
 };
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
 process.on("uncaughtException", (err) => {
   console.error("CRITICAL:", err);
-  process.exit(1);
   shutdown();
   setTimeout(() => process.exit(1), 5000).unref();
 });
