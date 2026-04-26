@@ -20,9 +20,8 @@ export const withdrawalLimiter = rateLimit({
   limit: 5,
   standardHeaders: "draft-8",
   legacyHeaders: false,
-  ipv6Subnet: 56,
   keyGenerator: (req) => {
-    return req.user?.id || ipKeyGenerator(req.ip);
+    return req.user?.id || ipKeyGenerator(req.ip, 56);
   },
   handler: tooManyRequestsHandler,
 });
