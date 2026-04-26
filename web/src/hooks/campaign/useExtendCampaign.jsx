@@ -10,7 +10,7 @@ export const useExtendCampaign = (campaignId) => {
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["campaigns", campaignId],
+        queryKey: ["campaign", campaignId],
       });
 
       toast.success("Campaign extended successfully!");
