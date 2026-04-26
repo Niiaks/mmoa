@@ -11,7 +11,6 @@ import { withdrawalRouter } from "./routes/withdrawal.route.js";
 import cors from "cors";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
-import { authLimiter, withdrawalLimiter } from "./middleware/rateLimiter.js";
 const app = express();
 
 app.use(
@@ -36,10 +35,10 @@ app.get("/health", (req, res) => {
     uptime: process.uptime(),
   });
 });
-app.use("/api/v1/auth", authLimiter, authRouter);
+app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/contributions", contributionRouter);
 app.use("/api/v1/campaigns", campaignRouter);
-app.use("/api/v1/withdrawals", withdrawalLimiter, withdrawalRouter);
+app.use("/api/v1/withdrawals", withdrawalRouter);
 
 //global error
 app.use((err, req, res, next) => {
