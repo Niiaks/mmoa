@@ -1,4 +1,4 @@
-import { rateLimit } from "express-rate-limit";
+import { rateLimit, ipKeyGenerator } from "express-rate-limit";
 
 const tooManyRequestsHandler = (_req, res) => {
   return res.status(429).json({
@@ -22,7 +22,7 @@ export const withdrawalLimiter = rateLimit({
   legacyHeaders: false,
   ipv6Subnet: 56,
   keyGenerator: (req) => {
-    return req.user?.id ?? req.ip;
+    return req.user?.id || ipKeyGenerator(req.ip);
   },
   handler: tooManyRequestsHandler,
 });
