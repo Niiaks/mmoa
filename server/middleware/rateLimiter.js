@@ -1,15 +1,18 @@
 import { rateLimit } from "express-rate-limit";
 
+const tooManyRequestsHandler = (_req, res) => {
+  return res.status(429).json({
+    success: false,
+    message: "too many requests",
+  });
+};
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
   standardHeaders: "draft-8",
   legacyHeaders: false,
   ipv6Subnet: 56,
-  message: JSON.stringify({
-    status: false,
-    message: "too many requests",
-  }),
+  handler: tooManyRequestsHandler,
 });
 
 export const withdrawalLimiter = rateLimit({
@@ -18,8 +21,8 @@ export const withdrawalLimiter = rateLimit({
   standardHeaders: "draft-8",
   legacyHeaders: false,
   ipv6Subnet: 56,
-  message: JSON.stringify({
-    status: false,
-    message: "too many requests",
-  }),
+  keyGenerator: (req) => {
+    return req.user?.id ?? req.ip;
+  },
+  handler: tooManyRequestsHandler,
 });
