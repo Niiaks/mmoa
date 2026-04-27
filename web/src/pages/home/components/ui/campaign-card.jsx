@@ -26,8 +26,7 @@ function CampaignCard({
 
   const [openCloseDialog, setOpenCloseDialog] = useState(false);
 
-  const shareLink = `${window.location.origin}/contribute/${slug}`;
-
+  const shareLink = slug ? `${window.location.origin}/contribute/${slug}` : "";
   const navigate = useNavigate();
   return (
     <>
@@ -61,10 +60,10 @@ function CampaignCard({
             {/* Row 4: Raised amount (left) / Goal amount (right) */}
             <div className="flex items-center justify-between">
               <span className="text-base font-bold text-slate-900">
-                GH₵ {raised.toLocaleString()}
+                GH₵ {(raised ?? 0).toLocaleString()}
               </span>
               <span className="text-sm text-slate-500">
-                of GH₵ {goal.toLocaleString()}
+                of GH₵ {(goal ?? 0).toLocaleString()}
               </span>
             </div>
           </div>
@@ -84,15 +83,17 @@ function CampaignCard({
           >
             Close Campaign
           </ContextMenuItem>
-          <ContextMenuItem
-            className="cursor-pointer"
-            onClick={() => {
-              navigator.clipboard.writeText(shareLink);
-              toast.success("Link copied to clipboard!");
-            }}
-          >
-            Share Link
-          </ContextMenuItem>
+          {shareLink && (
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                navigator.clipboard.writeText(shareLink);
+                toast.success("Link copied to clipboard!");
+              }}
+            >
+              Share Link
+            </ContextMenuItem>
+          )}
         </ContextMenuContent>
       </ContextMenu>
       <CloseCampaignDialog
