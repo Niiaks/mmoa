@@ -7,15 +7,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { useCloseCampaign } from "@/hooks/campaign/useCloseCampaign";
-import { useState } from "react";
 
-export function CloseCampaignDialog({ campaignId }) {
-  const [open, setOpen] = useState(false);
-
+export function CloseCampaignDialog({ campaignId, open, setOpen }) {
   const { mutate: closeCampaign, isPending } = useCloseCampaign(campaignId);
 
   const handleSubmit = (e) => {
@@ -29,15 +24,6 @@ export function CloseCampaignDialog({ campaignId }) {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="outline"
-          size="lg"
-          className="text-red-600 border-red-600 hover:bg-red-50"
-        >
-          Close Campaign
-        </Button>
-      </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
