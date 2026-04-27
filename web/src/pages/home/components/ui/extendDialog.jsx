@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useExtendCampaign } from "@/hooks/campaign/useExtendCampaign";
 import { useState } from "react";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
 
 export function ExtendDialog({ campaign }) {
   const [open, setOpen] = useState(false);
@@ -22,11 +24,24 @@ export function ExtendDialog({ campaign }) {
       ? campaign.deadline.slice(0, 10)
       : "",
   );
+  const [errors, setErrors] = useState({});
 
   const { mutate: extendCampaign, isPending } = useExtendCampaign(campaign._id);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const { valid, errors: fieldErrors } = validate(
+      schemas.extendCampaignSchema,
+      { deadline: deadline ? new Date(deadline).toISOString() : "" },
+    );
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     extendCampaign(deadline, {
       onSuccess: () => {
         setOpen(false);
@@ -70,7 +85,11 @@ export function ExtendDialog({ campaign }) {
                 type="date"
                 value={deadline}
                 onChange={(e) => setDeadline(e.target.value)}
+                required
               />
+              {errors.deadline && (
+                <p className="text-xs text-red-500">{errors.deadline}</p>
+              )}
             </Field>
           </FieldGroup>
 
