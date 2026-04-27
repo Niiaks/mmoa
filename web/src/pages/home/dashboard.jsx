@@ -55,6 +55,7 @@ function Dashboard() {
                   goal={campaign.targetAmount}
                   raised={campaign.totalRaised}
                   createdAgo={timeSince(campaign.createdAt)}
+                  slug={campaign.slug}
                 />
               ))}
             </div>

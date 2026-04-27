@@ -15,29 +15,32 @@ function Withdraw() {
   const [momoNumber, setMomoNumber] = useState("");
   const { id } = useParams();
   const { data } = useGetCampaignId(id);
-  const { mutate: withdraw, isPending } = useWithdrawal()
-  const { data: previewWithdrawal, isLoading: isPreviewLoading } = usePreviewWithdrawal(id);
+  const { mutate: withdraw, isPending } = useWithdrawal();
+  const { data: previewWithdrawal, isLoading: isPreviewLoading } =
+    usePreviewWithdrawal(id);
 
   const campaign = data?.campaign;
   const preview = previewWithdrawal?.breakdown;
   const navigate = useNavigate();
 
-
   const handleWithdraw = (e) => {
     e.preventDefault();
 
-    withdraw({
-      campaignId: campaign?._id,
-      momoNumber: momoNumber,
-    }, {
-      onSuccess: () => {
-        setMomoNumber("");
+    withdraw(
+      {
+        campaignId: campaign?._id,
+        momoNumber: momoNumber,
       },
-    })
-  }
+      {
+        onSuccess: () => {
+          setMomoNumber("");
+        },
+      },
+    );
+  };
 
   if (isPreviewLoading) {
-    return <Loader />
+    return <Loader />;
   }
   return (
     <div className="min-h-screen">
@@ -77,13 +80,11 @@ function Withdraw() {
                 GH₵ {preview?.availableBalance || 0}
               </p>
 
-              <p className="mt-2 text-sm text-slate-400">
-                {campaign?.title}
-              </p>
+              <p className="mt-2 text-sm text-slate-400">{campaign?.title}</p>
             </div>
 
             {/* ── Breakdown card ── */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-muted-foreground bg-white p-6 shadow-sm">
               <h3 className="text-sm font-semibold text-slate-900 mb-4">
                 Withdrawal summary
               </h3>
@@ -91,25 +92,31 @@ function Withdraw() {
               <div className="space-y-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Total raised</span>
-                  <span className="font-medium text-slate-800">GH₵ {preview?.totalRaised || 0}</span>
+                  <span className="font-medium text-slate-800">
+                    GH₵ {preview?.totalRaised || 0}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Platform fee (2.5%)</span>
-                  <span className="font-medium text-slate-800">GH₵ {preview?.platformFee || 0}</span>
+                  <span className="font-medium text-slate-800">
+                    GH₵ {preview?.platformFee || 0}
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Paystack Momo fee</span>
-                  <span className="font-medium text-slate-800">GH₵ {preview?.paystackMoMoFee || 0}</span>
+                  <span className="font-medium text-slate-800">
+                    GH₵ {preview?.paystackMoMoFee || 0}
+                  </span>
                 </div>
-
 
                 <div className="flex items-center justify-between">
                   <span className="text-slate-500">Total fees</span>
-                  <span className="font-medium text-slate-800">GH₵ {preview?.totalFees || 0}</span>
+                  <span className="font-medium text-slate-800">
+                    GH₵ {preview?.totalFees || 0}
+                  </span>
                 </div>
-
 
                 <Separator />
 
@@ -117,13 +124,15 @@ function Withdraw() {
                   <span className="font-semibold text-slate-900">
                     You receive
                   </span>
-                  <span className="font-bold text-[#bb4d00]">GH₵ {preview?.amountYouWillReceive || 0}</span>
+                  <span className="font-bold text-[#bb4d00]">
+                    GH₵ {preview?.amountYouWillReceive || 0}
+                  </span>
                 </div>
               </div>
             </div>
 
             {/* ── MoMo input ── */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="rounded-2xl border border-muted-foreground bg-white p-6 shadow-sm">
               <Label
                 htmlFor="momo"
                 className="text-sm font-semibold text-slate-900 flex items-center gap-2 mb-3"
@@ -142,8 +151,15 @@ function Withdraw() {
             </div>
 
             {/* ── CTA ── */}
-            <Button onClick={handleWithdraw} className="w-full" size="lg" disabled={!momoNumber || isPending || !preview?.canWithdraw}>
-              {isPending ? "withdrawing..." : `Withdraw GH₵ ${preview?.amountYouWillReceive || 0}`}
+            <Button
+              onClick={handleWithdraw}
+              className="w-full"
+              size="lg"
+              disabled={!momoNumber || isPending || !preview?.canWithdraw}
+            >
+              {isPending
+                ? "withdrawing..."
+                : `Withdraw GH₵ ${preview?.amountYouWillReceive || 0}`}
             </Button>
 
             <p className="text-xs text-center text-slate-400">

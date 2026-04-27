@@ -12,7 +12,7 @@ export const useRegister = () => {
     onError: (error) => {
       const message =
         error.response?.data?.message ||
-        "Registration failed. Please try again.";
+        "Registration failed. Please check your connectivity and try again.";
       toast.error(message);
     },
   });

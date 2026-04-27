@@ -27,6 +27,16 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use((req, res, next) => {
+  Object.defineProperty(req, "query", {
+    value: { ...req.query },
+    writable: true,
+    configurable: true,
+    enumerable: true,
+  });
+  next();
+});
+
 app.use(mongoSanitize());
 
 app.get("/health", (req, res) => {
