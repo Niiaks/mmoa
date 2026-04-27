@@ -53,10 +53,15 @@ app.use("/api/v1/withdrawals", withdrawalRouter);
 //global error
 app.use((err, req, res, next) => {
   console.error(err.stack); // Log for debugging
-  res.status(err.statusCode || 500).json({
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
     success: false,
-    message: err.message || "Oops something broke",
+    message:
+      statusCode >= 500
+        ? "Oops something broke"
+        : err.message || "Request failed",
   });
+});
 });
 
 let server;
