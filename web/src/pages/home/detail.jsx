@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { useGetContributions } from "@/hooks/contribution/useContributions";
 import { generatePdf } from "@/lib/exportContributorPdf";
 import { toast } from "sonner";
+import { useState } from "react";
 
 function CampaignDetail() {
   const { id } = useParams();
@@ -25,6 +26,8 @@ function CampaignDetail() {
   const { data, isPending } = useGetCampaignId(id);
   const { data: contributions, isPending: isContributionsPending } =
     useGetContributions(id);
+
+  const [openCloseDialog, setOpenCloseDialog] = useState(false);
 
   const campaign = data?.campaign || {};
 
@@ -203,7 +206,21 @@ function CampaignDetail() {
                   <ExtendDialog campaign={campaign} />
                 )}
 
-                <CloseCampaignDialog campaignId={campaign._id} />
+                {campaign.status === "active" && (
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={() => setOpenCloseDialog(true)}
+                  >
+                    Close Campaign
+                  </Button>
+                )}
+
+                <CloseCampaignDialog
+                  campaignId={campaign._id}
+                  open={openCloseDialog}
+                  setOpen={setOpenCloseDialog}
+                />
               </div>
             )}
           </div>
