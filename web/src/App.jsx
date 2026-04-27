@@ -3,7 +3,6 @@ import { Button } from "./components/ui/button";
 
 function App() {
   const navigate = useNavigate();
-  const isLoggedIn = false;
 
   return (
     <div className="min-h-screen">
@@ -31,14 +30,7 @@ function App() {
             family, medical emergency, or any urgent need.
           </p>
           <div className="flex gap-4">
-            <Button
-              onClick={
-                isLoggedIn
-                  ? () => navigate("/dashboard")
-                  : () => navigate("/login")
-              }
-              size="lg"
-            >
+            <Button onClick={() => navigate("/login")} size="lg">
               Start a Campaign
             </Button>
             <Button asChild variant="outline" size="lg">
@@ -49,7 +41,7 @@ function App() {
 
         <section className="mt-10 flex flex-col items-center justify-center">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border border-[#bb4d00] shadow-sm w-70 rounded-2xl flex flex-col p-6 justify-center gap-1">
+            <div className="border border-muted-foreground shadow-sm w-70 rounded-2xl flex flex-col p-6 justify-center gap-1">
               <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                 GH₵ 100,000
               </h3>
@@ -57,7 +49,7 @@ function App() {
                 Total Raised
               </p>
             </div>
-            <div className="border-[#bb4d00] border shadow-sm w-70 rounded-2xl flex flex-col p-6 justify-center gap-1">
+            <div className="border border-muted-foreground shadow-sm w-70 rounded-2xl flex flex-col p-6 justify-center gap-1">
               <h3 className="text-3xl font-bold tracking-tight text-slate-900">
                 3,000
               </h3>
@@ -68,7 +60,7 @@ function App() {
           </div>
         </section>
 
-        <footer className="mt-20 border-t border-slate-200 py-8 flex flex-col items-center gap-4 text-center">
+        <footer className="mt-20 border-t border-muted-foreground py-8 flex flex-col items-center gap-4 text-center">
           <div className="flex flex-row items-center gap-6 text-sm">
             <Link to="/terms-of-service">Terms of Service</Link>
             <span className="text-slate-300">|</span>

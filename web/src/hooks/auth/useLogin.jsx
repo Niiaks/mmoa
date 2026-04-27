@@ -20,7 +20,7 @@ export const useLogin = () => {
     onError: (error) => {
       const message =
         error.response?.data?.message ||
-        "Login Failed. Please check your credentials and try again.";
+        "Login Failed. Please check your connectivity and try again.";
       toast.error(message);
     },
   });

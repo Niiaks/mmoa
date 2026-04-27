@@ -78,7 +78,7 @@ function Contribute() {
         {/* Centered Content */}
         <section className="mt-6 flex flex-col items-center justify-center">
           {/* Contribution Card */}
-          <Card className="w-full max-w-sm shadow-sm">
+          <Card className="w-full max-w-sm border border-muted-foreground">
             <CardHeader>
               <span className="text-xs font-semibold uppercase text-[#bb4d00]">
                 {campaign.type}
@@ -166,7 +166,7 @@ function Contribute() {
 
           {/* Stats (compact + secondary) */}
           <div className="w-full max-w-sm mt-6">
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div className="bg-white border border-muted-foreground rounded-2xl p-6 shadow-sm">
               <p className="text-lg font-semibold">
                 GH₵ {campaign.amountRaised}
                 <span className="text-sm text-slate-500 font-normal ml-1">

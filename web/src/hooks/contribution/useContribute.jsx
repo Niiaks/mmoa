@@ -9,7 +9,7 @@ export const useContribute = () => {
     onError: (error) => {
       const message =
         error.response?.data?.message ||
-        "Failed to create campaign. Please try again.";
+        "Failed to create contribution. Please try again.";
       toast.error(message);
     },
   });

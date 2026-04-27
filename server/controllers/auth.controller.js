@@ -86,49 +86,56 @@ export const registerUser = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !password) {
-    return res.status(400).json({
-      success: false,
-      message: "validation(error): invalid payload",
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "validation(error): invalid payload",
+      });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "invalid credentials",
+      });
+    }
+
+    if (!(await verifyPassword(password, user.password))) {
+      return res.status(401).json({
+        success: false,
+        message: "invalid credentials",
+      });
+    }
+
+    const token = generateToken(user._id, user.email, user.name);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: ENV.nodeEnv === "production",
+      sameSite: ENV.nodeEnv === "production" ? "none" : "lax",
+      expires: new Date(Date.now() + 900000),
     });
-  }
 
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: "invalid credentials",
+    return res.status(200).json({
+      success: true,
+      message: "user logged in",
+      user: {
+        id: user._id,
+        email: user.email,
+        phone: user.phone,
+      },
     });
+  } catch (error) {
+    console.error("login error: ", error.message);
+    return res
+      .status(500)
+      .json({ success: false, message: "Oops Something broke" });
   }
-
-  if (!(await verifyPassword(password, user.password))) {
-    return res.status(401).json({
-      success: false,
-      message: "invalid credentials",
-    });
-  }
-
-  const token = generateToken(user._id, user.email, user.name);
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    secure: ENV.nodeEnv === "production",
-    sameSite: "none",
-    expires: new Date(Date.now() + 900000),
-  });
-
-  return res.status(200).json({
-    success: true,
-    message: "user logged in",
-    user: {
-      id: user._id,
-      email: user.email,
-      phone: user.phone,
-    },
-  });
 };
 
 export const getCurrentUser = async (req, res) => {

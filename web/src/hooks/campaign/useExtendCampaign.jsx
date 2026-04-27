@@ -1,20 +1,20 @@
 import { extendCampaignDeadline } from "@/api/campaign";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useExtendCampaign = (campaignId) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => extendCampaignDeadline(campaignId),
+    mutationFn: (deadline) => extendCampaignDeadline({ campaignId, deadline }),
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["campaigns", campaignId],
+        queryKey: ["campaign", campaignId],
       });
 
       toast.success("Campaign extended successfully!");
     },
-
     onError: (error) => {
       const message =
         error.response?.data?.message ||

@@ -1,5 +1,6 @@
 import { closeCampaign } from "@/api/campaign";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useCloseCampaign = (campaignId) => {
   const queryClient = useQueryClient();
@@ -9,7 +10,7 @@ export const useCloseCampaign = (campaignId) => {
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["campaigns", campaignId],
+        queryKey: ["campaign", campaignId],
       });
 
       toast.success("Campaign closed successfully!");

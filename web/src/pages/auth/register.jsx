@@ -20,7 +20,7 @@ function Register() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const { mutate: registerUser, isPending, error } = useRegister();
+  const { mutate: registerUser, isPending } = useRegister();
   const { mutate: loginUser } = useLogin();
 
   const handleSubmit = (e) => {

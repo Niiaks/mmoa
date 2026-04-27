@@ -1,18 +1,19 @@
+import { withdrawMoney } from "@/api/withdrawals";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { register } from "@/api/auth";
-export const useRegister = () => {
+
+export const useWithdrawal = () => {
   return useMutation({
-    mutationFn: register,
+    mutationFn: withdrawMoney,
 
     onSuccess: () => {
-      toast.success("Registration successful!");
+      toast.success("Withdrawal successful! Your money is on the way.");
     },
 
     onError: (error) => {
       const message =
         error.response?.data?.message ||
-        "Registration failed. Please check your connectivity and try again.";
+        "Failed to withdraw money. Please try again.";
       toast.error(message);
     },
   });

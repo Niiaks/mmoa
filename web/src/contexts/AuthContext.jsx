@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
     gcTime: 15 * 60 * 1000,
   });
 
+  //FEAT: add later when logout api is ready
   const logout = () => {
     queryClient.removeQueries({ queryKey: ["auth", "me"] });
     window.location.href = "/login";
@@ -31,7 +32,6 @@ export const AuthProvider = ({ children }) => {
         isLoading,
         isAuthenticated: !!user,
         error,
-        logout,
         refetchUser: () =>
           queryClient.invalidateQueries({ queryKey: ["auth", "me"] }),
       }}
