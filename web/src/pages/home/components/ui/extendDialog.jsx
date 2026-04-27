@@ -76,7 +76,9 @@ export function ExtendDialog({ campaign }) {
 
           <DialogFooter className="pt-3">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button type="button" variant="outline">
+                Cancel
+              </Button>
             </DialogClose>
             <Button
               type="submit"

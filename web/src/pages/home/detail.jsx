@@ -182,9 +182,15 @@ function CampaignDetail() {
 
                   <Button
                     size="icon"
-                    onClick={() => {
-                      navigator.clipboard.writeText(shareLink);
-                      toast.success("Link copied to clipboard!");
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(shareLink);
+                        toast.success("Link copied to clipboard!");
+                      } catch {
+                        toast.error(
+                          "Couldn't copy the link. Please copy it manually.",
+                        );
+                      }
                     }}
                   >
                     <Copy className="h-4 w-4" />

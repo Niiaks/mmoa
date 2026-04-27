@@ -62,7 +62,7 @@ app.use((err, req, res, next) => {
         : err.message || "Request failed",
   });
 });
-});
+
 
 let server;
 

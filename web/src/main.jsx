@@ -43,7 +43,7 @@ const queryClient = new QueryClient({
 
 function RouteErrorElement() {
   const error = useRouteError();
-  return <ErrorFallback error={error} resetErrorBoundary={() => {}} />;
+  return <ErrorFallback error={error} resetErrorBoundary={() => window.location.reload()} />;
 }
 
 function HomeRouter() {

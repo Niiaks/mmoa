@@ -28,7 +28,7 @@ function Withdraw() {
 
     withdraw(
       {
-        campaignId: campaign?._id,
+        campaignId: id,
         momoNumber: momoNumber,
       },
       {
