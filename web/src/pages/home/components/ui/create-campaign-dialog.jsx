@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { useCreateCampaign } from "@/hooks/campaign/useCreateCampaign";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
 
 const campaignTypes = [
   { value: "bereavement", label: "Bereavement" },
@@ -24,6 +26,7 @@ const campaignTypes = [
 
 export function CreateCampaignDialog() {
   const [open, setOpen] = useState(false);
+  const [errors, setErrors] = useState({});
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -49,6 +52,24 @@ export function CreateCampaignDialog() {
       targetAmount: Number(form.targetAmount),
     };
 
+    const { valid, errors: fieldErrors } = validate(
+      schemas.createCampaignSchema,
+      {
+        title: form.title,
+        description: form.description,
+        targetAmount: Number(form.targetAmount),
+        deadline: form.deadline
+          ? new Date(form.deadline).toISOString()
+          : undefined,
+      },
+    );
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     createCampaign(payload, {
       onSuccess: () => setOpen(false),
     });
@@ -81,6 +102,9 @@ export function CreateCampaignDialog() {
               onChange={handleChange}
               required
             />
+            {errors.title && (
+              <p className="text-xs text-red-500">{errors.title}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -96,6 +120,9 @@ export function CreateCampaignDialog() {
               required
               className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring resize-none"
             />
+            {errors.description && (
+              <p className="text-xs text-red-500">{errors.description}</p>
+            )}
           </div>
 
           {/* Type + Target Amount side by side */}
@@ -132,6 +159,9 @@ export function CreateCampaignDialog() {
                 onChange={handleChange}
                 required
               />
+              {errors.targetAmount && (
+                <p className="text-xs text-red-500">{errors.targetAmount}</p>
+              )}
             </div>
           </div>
 

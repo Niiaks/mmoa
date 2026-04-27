@@ -13,15 +13,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useLogin } from "@/hooks/auth/useLogin";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const { mutate: loginUser, isPending } = useLogin();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const { valid, errors: fieldErrors } = validate(schemas.loginSchema, {
+      email,
+      password,
+    });
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     loginUser({ email, password });
   };
 
@@ -69,6 +83,9 @@ function Login() {
                     placeholder="m@example.com"
                     required
                   />
+                  {errors.email && (
+                    <p className="text-xs text-red-500">{errors.email}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -80,6 +97,9 @@ function Login() {
                     type="password"
                     required
                   />
+                  {errors.password && (
+                    <p className="text-xs text-red-500">{errors.password}</p>
+                  )}
                 </div>
                 <Button type="submit" className="w-full" disabled={isPending}>
                   {isPending ? "Logging in..." : "Login"}

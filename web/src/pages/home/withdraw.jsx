@@ -10,9 +10,12 @@ import { useGetCampaignId } from "@/hooks/campaign/useGetCampaignId";
 import { useWithdrawal } from "@/hooks/withdrawal/useWithdrawal";
 import { usePreviewWithdrawal } from "@/hooks/withdrawal/usePreviewWithdrawal";
 import Loader from "@/components/Loader";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
 
 function Withdraw() {
   const [momoNumber, setMomoNumber] = useState("");
+  const [errors, setErrors] = useState({});
   const { id } = useParams();
   const { data } = useGetCampaignId(id);
   const { mutate: withdraw, isPending } = useWithdrawal();
@@ -26,6 +29,17 @@ function Withdraw() {
   const handleWithdraw = (e) => {
     e.preventDefault();
 
+    const { valid, errors: fieldErrors } = validate(
+      schemas.withdrawFromCampaignSchema,
+      { momoNumber },
+    );
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     withdraw(
       {
         campaignId: id,
@@ -147,7 +161,11 @@ function Withdraw() {
                 placeholder="024 000 0000"
                 value={momoNumber}
                 onChange={(e) => setMomoNumber(e.target.value)}
+                required
               />
+              {errors.momoNumber && (
+                <p className="text-xs text-red-500">{errors.momoNumber}</p>
+              )}
             </div>
 
             {/* ── CTA ── */}
