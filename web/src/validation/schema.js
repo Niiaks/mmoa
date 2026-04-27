@@ -20,6 +20,13 @@ const createCampaignSchema = z.object({
     message: "Deadline must be in the future",
   }).optional(),
   requireContributorName: z.boolean(),
+  type: z.enum([
+    "emergency",
+    "bereavement",
+    "education",
+    "medical",
+    "other",
+  ]),
 });
 
 const extendCampaignSchema = z.object({
@@ -29,8 +36,8 @@ const extendCampaignSchema = z.object({
 });
 
 const contributeToCampaignSchema = z.object({
-  name: z.string().optional(),
-  email: z.email("invalid email"),
+  contributorName: z.string().optional(),
+  contributorEmail: z.email("invalid email"),
   amount: z.number().positive("amount must be positive"),
 });
 

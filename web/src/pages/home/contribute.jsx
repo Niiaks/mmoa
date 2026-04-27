@@ -17,6 +17,7 @@ import { useContribute } from "@/hooks/contribution/useContribute";
 import { toast } from "sonner";
 import { validate } from "@/validation/validate";
 import { schemas } from "@/validation/schema";
+import * as z from "zod"
 
 function Contribute() {
   const { slug } = useParams();
@@ -50,11 +51,11 @@ function Contribute() {
     const { valid, errors: fieldErrors } = validate(
       contributorNameRequired
         ? schemas.contributeToCampaignSchema.extend({
-          name: z.string().min(1, "Name is required"),
+          contributorName: z.string().min(1, "Name is required"),
         })
         : schemas.contributeToCampaignSchema, {
-      name: contributorNameRequired ? name : undefined,
-      email,
+      contributorName: contributorNameRequired ? name : undefined,
+      contributorEmail: email,
       amount: Number(amount),
     },
     );

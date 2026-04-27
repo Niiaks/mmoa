@@ -61,6 +61,8 @@ export function CreateCampaignDialog() {
         deadline: form.deadline
           ? new Date(form.deadline).toISOString()
           : undefined,
+        requireContributorName: form.requireContributorName,
+        type: form.type,
       },
     );
 
