@@ -48,12 +48,15 @@ function Contribute() {
     e.preventDefault();
 
     const { valid, errors: fieldErrors } = validate(
-      schemas.contributeToCampaignSchema,
-      {
-        name: contributorNameRequired ? name : undefined,
-        email,
-        amount: Number(amount),
-      },
+      contributorNameRequired
+        ? schemas.contributeToCampaignSchema.extend({
+          name: z.string().min(1, "Name is required"),
+        })
+        : schemas.contributeToCampaignSchema, {
+      name: contributorNameRequired ? name : undefined,
+      email,
+      amount: Number(amount),
+    },
     );
 
     if (!valid) {

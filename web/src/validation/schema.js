@@ -16,13 +16,16 @@ const createCampaignSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
   description: z.string().min(3, "Description must be at least 3 characters"),
   targetAmount: z.number().positive("amount must be positive"),
-  deadline: z.iso.datetime().optional(),
+  deadline: z.iso.datetime().transform(str => new Date(str)).refine((date) => date > new Date(), {
+    message: "Deadline must be in the future",
+  }).optional(),
+  requireContributorName: z.boolean()
 });
 
 const extendCampaignSchema = z.object({
-  deadline: z.iso.datetime().refine((date) => date > new Date(), {
+  deadline: z.iso.datetime().transform(str => new Date(str)).refine((date) => date > new Date(), {
     message: "Deadline must be in the future",
-  }),
+  })
 });
 
 const contributeToCampaignSchema = z.object({

@@ -71,7 +71,17 @@ export function CreateCampaignDialog() {
 
     setErrors({});
     createCampaign(payload, {
-      onSuccess: () => setOpen(false),
+      onSuccess: () => {
+        setForm({
+          title: "",
+          description: "",
+          type: "",
+          targetAmount: "",
+          deadline: "",
+          requireContributorName: true,
+        });
+        setOpen(false);
+      },
     });
   };
 
