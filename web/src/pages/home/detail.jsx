@@ -49,7 +49,7 @@ function CampaignDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <header className="flex items-center justify-between mb-6">
@@ -71,7 +71,7 @@ function CampaignDetail() {
           {/* LEFT */}
           <div className="lg:col-span-2 space-y-6">
             {/* Summary */}
-            <div className="bg-white rounded-xl border p-5 shadow-sm">
+            <div className="bg-white rounded-xl border border-muted-foreground p-5 shadow-sm">
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className="text-xs font-semibold uppercase text-[#bb4d00]">
                   {campaign.type || "Campaign"}
@@ -108,7 +108,7 @@ function CampaignDetail() {
             </div>
 
             {/* Contributors */}
-            <div className="bg-white rounded-xl border p-5 shadow-sm">
+            <div className="bg-white rounded-xl border border-muted-foreground p-5 shadow-sm">
               {recentContributors.length > 0 ? (
                 <>
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
@@ -164,7 +164,7 @@ function CampaignDetail() {
           <div className="space-y-6">
             {/* Share */}
             {campaign.status === "active" && shareLink && (
-              <div className="bg-white rounded-xl border p-5 shadow-sm">
+              <div className="bg-white rounded-xl border border-muted-foreground p-5 shadow-sm">
                 <h3 className="flex items-center gap-2 font-semibold mb-2">
                   <Share className="h-4 w-4 text-[#bb4d00]" />
                   Share Link
@@ -174,7 +174,7 @@ function CampaignDetail() {
                   <input
                     readOnly
                     value={shareLink}
-                    className="flex-1 h-10 px-3 border rounded-md text-sm"
+                    className="flex-1 h-10 px-3 border border-muted-foreground rounded-md text-sm"
                   />
 
                   <Button
@@ -192,7 +192,7 @@ function CampaignDetail() {
 
             {/* Actions */}
             {campaign.status !== "expired" && (
-              <div className="bg-white rounded-xl border p-5 shadow-sm space-y-3">
+              <div className="bg-white rounded-xl border border-muted-foreground p-5 shadow-sm space-y-3">
                 <h3 className="font-semibold">Manage Campaign</h3>
 
                 <Button asChild className="w-full">
