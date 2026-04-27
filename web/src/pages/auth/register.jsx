@@ -15,16 +15,32 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useLogin } from "@/hooks/auth/useLogin";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
+
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState({});
   const { mutate: registerUser, isPending } = useRegister();
   const { mutate: loginUser } = useLogin();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const { valid, errors: fieldErrors } = validate(
+      schemas.registrationSchema,
+      { name, email, password, phone },
+    );
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     registerUser(
       { email, password, name, phone },
       {
@@ -76,6 +92,9 @@ function Register() {
                     placeholder="John Doe"
                     required
                   />
+                  {errors.name && (
+                    <p className="text-xs text-red-500">{errors.name}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -88,6 +107,9 @@ function Register() {
                     placeholder="m@example.com"
                     required
                   />
+                  {errors.email && (
+                    <p className="text-xs text-red-500">{errors.email}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -100,6 +122,9 @@ function Register() {
                     placeholder="0201234567"
                     required
                   />
+                  {errors.phone && (
+                    <p className="text-xs text-red-500">{errors.phone}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -111,6 +136,9 @@ function Register() {
                     type="password"
                     required
                   />
+                  {errors.password && (
+                    <p className="text-xs text-red-500">{errors.password}</p>
+                  )}
                 </div>
 
                 <Button type="submit" className="w-full" disabled={isPending}>

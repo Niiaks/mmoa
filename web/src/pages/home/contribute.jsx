@@ -15,6 +15,8 @@ import { useState } from "react";
 import Loader from "@/components/Loader";
 import { useContribute } from "@/hooks/contribution/useContribute";
 import { toast } from "sonner";
+import { validate } from "@/validation/validate";
+import { schemas } from "@/validation/schema";
 
 function Contribute() {
   const { slug } = useParams();
@@ -27,6 +29,7 @@ function Contribute() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [amount, setAmount] = useState("");
+  const [errors, setErrors] = useState({});
 
   const campaign = data?.campaign || {};
 
@@ -43,6 +46,25 @@ function Contribute() {
 
   const handleContribute = (e) => {
     e.preventDefault();
+
+    const { valid, errors: fieldErrors } = validate(
+      contributorNameRequired
+        ? schemas.contributeToCampaignSchema.extend({
+          name: z.string().min(1, "Name is required"),
+        })
+        : schemas.contributeToCampaignSchema, {
+      name: contributorNameRequired ? name : undefined,
+      email,
+      amount: Number(amount),
+    },
+    );
+
+    if (!valid) {
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
     contribute(
       {
         campaignId: campaign.id,
@@ -101,7 +123,11 @@ function Contribute() {
                       placeholder="John Doe"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      required
                     />
+                    {errors.name && (
+                      <p className="text-xs text-red-500">{errors.name}</p>
+                    )}
                   </div>
                 )}
                 <div className="grid gap-2">
@@ -112,7 +138,11 @@ function Contribute() {
                     placeholder="john@example.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                   />
+                  {errors.email && (
+                    <p className="text-xs text-red-500">{errors.email}</p>
+                  )}
                 </div>
 
                 <div className="grid gap-2">
@@ -123,7 +153,11 @@ function Contribute() {
                     placeholder="Enter amount"
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
+                    required
                   />
+                  {errors.amount && (
+                    <p className="text-xs text-red-500">{errors.amount}</p>
+                  )}
                 </div>
 
                 {/* Quick amounts */}
