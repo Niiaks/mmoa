@@ -19,7 +19,7 @@ const createCampaignSchema = z.object({
   deadline: z.iso.datetime().transform(str => new Date(str)).refine((date) => date > new Date(), {
     message: "Deadline must be in the future",
   }).optional(),
-  requireContributorName: z.boolean()
+  requireContributorName: z.boolean(),
 });
 
 const extendCampaignSchema = z.object({
